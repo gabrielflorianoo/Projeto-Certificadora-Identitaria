@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum Role {
+    ADMIN
+    STUDENT
+    VOLUNTEER
+    TEACHER
+}
+
+model User {
+    id        Int      @id @default(autoincrement())
+    name      String
+    email     String   @unique
+    password  String
+    role      Role
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    enrollments   Enrollment[]
+    taughtClasses Class[]      @relation("TaughtClasses")
+    attendances   Attendance[]
+    grades        Grade[]
+}
+
+model Workshop {
+    id              Int      @id @default(autoincrement())
+    title           String
+    description     String
+    startDate       DateTime
+    endDate         DateTime
+    maxParticipants Int
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    classes     Class[]
+    enrollments Enrollment[]
+    grades      Grade[]
+}
+
+model Enrollment {
+    id         Int      @id @default(autoincrement())
+    userId     Int
+    workshopId Int
+    status     String
+    date       DateTime @default(now())
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    user     User     @relation(fields: [userId], references: [id])
+    workshop Workshop @relation(fields: [workshopId], references: [id])
+}
+
+model Class {
+    id               Int      @id @default(autoincrement())
+    workshopId       Int
+    date             DateTime
+    subject          String
+    taughtById       Int
+    enrolledStudents Int
+    createdAt        DateTime @default(now())
+
+    workshop    Workshop     @relation(fields: [workshopId], references: [id])
+    teacher     User         @relation("TaughtClasses", fields: [taughtById], references: [id])
+    attendances Attendance[]
+    grades      Grade[]
+}
+
+model Attendance {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    classId   Int
+    present   Boolean
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    student User  @relation(fields: [userId], references: [id])
+    class   Class @relation(fields: [classId], references: [id])
+}
+
+model Grade {
+    id         Int      @id @default(autoincrement())
+    userId     Int
+    classId    Int?
+    workshopId Int?
+    grade      Float
+    notes      String?
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    student  User      @relation(fields: [userId], references: [id])
+    class    Class?    @relation(fields: [classId], references: [id])
+    workshop Workshop? @relation(fields: [workshopId], references: [id])
+}
