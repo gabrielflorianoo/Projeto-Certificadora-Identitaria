@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
 
+// Importa o CSS do próprio LoginForm
+import './LoginForm.css';
+
+// Importações dos CSS de outros componentes que mencionou (caso precise usar os estilos globais)
+import './ForgotPassword.css';
+import './Dashboard.css';
+import './NotFound.css';
+
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -20,46 +28,41 @@ export default function LoginForm() {
 
   return (
     <div className="animated-bg flex items-center justify-center min-h-screen">
-      <div className="bg-white/10 backdrop-blur-md p-8 rounded-xl shadow-lg w-full max-w-md text-white">
-       <img
-  src="/ellpi.png"
-  alt="Ellpi"
-  className="mx-auto mb-6 w-100 h-auto animate-float"
-/>
+      <div className="login-container">
+        <img
+          src="/ellpi.png"
+          alt="Ellpi"
+          className="mx-auto mb-6 w-100 h-auto animate-float"
+        />
         <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
-        {erro && <p className="text-red-400">{erro}</p>}
+        {erro && <p className="error-msg">{erro}</p>}
         <form onSubmit={handleLogin}>
-          <div className="relative mb-4">
-            <FaUser className="absolute left-3 top-3 text-white" />
+          <div className="input-group">
+            <FaUser />
             <input
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-10 w-full p-2 border rounded bg-white/20 text-white placeholder-white"
               required
             />
           </div>
-          <div className="relative mb-6">
-            <FaLock className="absolute left-3 top-3 text-white" />
+          <div className="input-group">
+            <FaLock />
             <input
               type="password"
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              className="pl-10 w-full p-2 border rounded bg-white/20 text-white placeholder-white"
               required
             />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-2 rounded hover:scale-105 transition-transform"
-          >
+          <button type="submit" className="login-btn">
             Entrar
           </button>
         </form>
-        <p className="mt-4 text-sm text-center">
-          <a href="/esqueci-senha" className="underline text-blue-300 hover:text-blue-100">
+        <p className="forgot-password">
+          <a href="/esqueci-senha">
             Esqueceu sua senha?
           </a>
         </p>
