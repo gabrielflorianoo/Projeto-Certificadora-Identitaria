@@ -50,6 +50,7 @@ model User {
     role        Role
     phone       String   
     dateOfBirth DateTime
+    age         Int
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt
 
