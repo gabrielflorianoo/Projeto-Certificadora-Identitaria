@@ -34,7 +34,6 @@ const Navbar = () => {
                     { label: "Alunos", path: "/students" },
                     { label: "Turmas", path: "/classes" },
                     { label: "Presença", path: "/attendance" },
-                    { label: "Notas", path: "/grades" },
                     { label: "Relatórios", path: "/reports" },
                 );
                 break;
@@ -42,7 +41,6 @@ const Navbar = () => {
                 items.push(
                     { label: "Dashboard", path: "/dashboard" },
                     { label: "Presença", path: "/attendance" },
-                    { label: "Notas", path: "/grades" },
                     { label: "Alunos", path: "/students" },
                 );
                 break;
@@ -52,7 +50,6 @@ const Navbar = () => {
                     { label: "Voluntários", path: "/volunteers" },
                     { label: "Alunos", path: "/students" },
                     { label: "Presença", path: "/attendance" },
-                    { label: "Notas", path: "/grades" },
                     { label: "Relatórios", path: "/reports" },
                     { label: "Analytics", path: "/analytics" },
                 );
