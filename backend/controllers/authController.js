@@ -101,6 +101,19 @@ export const loginValidation = [
     body("password").notEmpty().withMessage("Senha é obrigatória"),
 ];
 
+// Validador para solicitação de redefinição de senha
+export const forgotPasswordValidation = [
+    body("email").isEmail().withMessage("Email inválido"),
+];
+
+// Validador para redefinição de senha
+export const resetPasswordValidation = [
+    body("token").notEmpty().withMessage("Token é obrigatório"),
+    body("newPassword")
+        .isLength({ min: 6 })
+        .withMessage("Nova senha deve ter pelo menos 6 caracteres"),
+];
+
 // Registrar usuário
 export const register = async (req, res) => {
     try {
@@ -228,6 +241,113 @@ export const getProfile = async (req, res) => {
         });
 
         res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+    }
+};
+
+// Solicitar redefinição de senha
+export const forgotPassword = async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { email } = req.body;
+
+        // Verificar se o usuário existe
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        if (!user) {
+            // Por segurança, não revelamos se o email existe ou não
+            return res.json({
+                message: "Se o email existir em nossa base, você receberá um código de redefinição.",
+            });
+        }
+
+        // TODO: Implementar geração e envio de token por email
+        // Por enquanto, vamos simular com um token fixo para desenvolvimento
+        const resetToken = "123456";
+        
+        // TODO: Armazenar o token no banco de dados com expiração
+        // await prisma.passwordReset.create({
+        //     data: {
+        //         email,
+        //         token: resetToken,
+        //         expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutos
+        //     },
+        // });
+
+        // TODO: Enviar email com o token
+        console.log(`Token de redefinição para ${email}: ${resetToken}`);
+
+        res.json({
+            message: "Código de redefinição enviado para seu email.",
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+    }
+};
+
+// Redefinir senha
+export const resetPassword = async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { email, token, newPassword } = req.body;
+
+        // TODO: Verificar se o token é válido e não expirou
+        // const passwordReset = await prisma.passwordReset.findFirst({
+        //     where: {
+        //         email,
+        //         token,
+        //         expiresAt: { gt: new Date() },
+        //     },
+        // });
+
+        // if (!passwordReset) {
+        //     return res.status(400).json({ error: "Token inválido ou expirado" });
+        // }
+
+        // Por enquanto, aceitar apenas o token fixo para desenvolvimento
+        if (token !== "123456") {
+            return res.status(400).json({ error: "Token inválido ou expirado" });
+        }
+
+        // Verificar se o usuário existe
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        if (!user) {
+            return res.status(400).json({ error: "Usuário não encontrado" });
+        }
+
+        // Hash da nova senha
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Atualizar a senha do usuário
+        await prisma.user.update({
+            where: { email },
+            data: { password: hashedPassword },
+        });
+
+        // TODO: Remover o token usado
+        // await prisma.passwordReset.delete({
+        //     where: { id: passwordReset.id },
+        // });
+
+        res.json({
+            message: "Senha redefinida com sucesso",
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Erro interno do servidor" });

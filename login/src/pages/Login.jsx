@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import GlassCard from "../components/GlassCard";
 import { useAuth } from "../contexts/AuthContext";
+import { useToast } from "../hooks/use-toast";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -10,14 +11,20 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { login, loading, isAuthenticated } = useAuth();
+    const { toast } = useToast();
 
     // Mostrar mensagem de sucesso do registro se existir
     useEffect(() => {
         if (location.state?.message) {
-            // Aqui você pode usar um toast ou similar
-            console.log(location.state.message);
+            toast({
+                title: "Sucesso!",
+                description: location.state.message,
+                variant: "default",
+            });
+            // Limpar o state para evitar mostrar a mensagem novamente
+            window.history.replaceState({}, document.title);
         }
-    }, [location]);
+    }, [location, toast]);
 
     // Redirecionar se já estiver autenticado
     useEffect(() => {
@@ -103,9 +110,15 @@ const Login = () => {
                         className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:scale-105 transition-transform duration-200 disabled:opacity-50"
                     >
                         {loading ? "Entrando..." : "Entrar"}                    </button>
-                </form>
-
-                <div className="mt-6 text-center">
+                </form>                <div className="mt-6 text-center space-y-3">
+                    <p className="text-white/70 text-sm">
+                        <Link 
+                            to="/forgot-password" 
+                            className="text-blue-300 hover:text-blue-200 underline transition-colors"
+                        >
+                            Esqueci minha senha
+                        </Link>
+                    </p>
                     <p className="text-white/70 text-sm">
                         Não tem uma conta?{" "}
                         <Link 
