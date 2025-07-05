@@ -33,6 +33,11 @@ export const getAllUsers = async (req, res) => {
                 role: true,
                 createdAt: true,
                 updatedAt: true,
+                enrollments: {
+                    include: {
+                        workshop: true,
+                    },
+                },
             },
             skip: parseInt(skip),
             take: parseInt(limit),
@@ -43,6 +48,49 @@ export const getAllUsers = async (req, res) => {
 
         res.json({
             users,
+            pagination: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(total / limit),
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+    }
+};
+
+// Listar apenas estudantes (ADMIN, TEACHER, VOLUNTEER)
+export const getStudents = async (req, res) => {
+    try {
+        const { page = 1, limit = 50 } = req.query;
+        const skip = (page - 1) * limit;
+
+        const students = await prisma.user.findMany({
+            where: { role: "STUDENT" },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
+                enrollments: {
+                    include: {
+                        workshop: true,
+                    },
+                },
+            },
+            skip: parseInt(skip),
+            take: parseInt(limit),
+            orderBy: { name: "asc" },
+        });
+
+        const total = await prisma.user.count({ where: { role: "STUDENT" } });
+
+        res.json({
+            users: students,
             pagination: {
                 total,
                 page: parseInt(page),
