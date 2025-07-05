@@ -23,6 +23,16 @@ import { generateToken } from "../utils/jwt.js";
  *           type: string
  *           enum: [ADMIN, STUDENT, VOLUNTEER, TEACHER]
  *           description: Role do usuário
+ *         phone:
+ *           type: string
+ *           description: Telefone do usuário
+ *         dateOfBirth:
+ *           type: string
+ *           format: date-time
+ *           description: Data de nascimento
+ *         age:
+ *           type: integer
+ *           description: Idade do usuário
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -74,6 +84,16 @@ export const registerValidation = [
     body("role")
         .isIn(["ADMIN", "STUDENT", "VOLUNTEER", "TEACHER"])
         .withMessage("Role inválido"),
+    body("phone")
+        .trim()
+        .isLength({ min: 10, max: 15 })
+        .withMessage("Telefone deve ter entre 10 e 15 caracteres"),
+    body("dateOfBirth")
+        .isISO8601()
+        .withMessage("Data de nascimento deve estar no formato válido (YYYY-MM-DD)"),
+    body("age")
+        .isInt({ min: 1, max: 120 })
+        .withMessage("Idade deve ser um número entre 1 e 120"),
 ];
 
 export const loginValidation = [
@@ -89,7 +109,7 @@ export const register = async (req, res) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, email, password, role } = req.body;
+        const { name, email, password, role, phone, dateOfBirth, age } = req.body;
 
         // Verificar se o usuário já existe
         const existingUser = await prisma.user.findUnique({
@@ -112,12 +132,18 @@ export const register = async (req, res) => {
                 email,
                 password: hashedPassword,
                 role,
+                phone,
+                dateOfBirth: new Date(dateOfBirth),
+                age: parseInt(age),
             },
             select: {
                 id: true,
                 name: true,
                 email: true,
                 role: true,
+                phone: true,
+                dateOfBirth: true,
+                age: true,
                 createdAt: true,
             },
         });
@@ -171,6 +197,9 @@ export const login = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                phone: user.phone,
+                dateOfBirth: user.dateOfBirth,
+                age: user.age,
             },
             token,
         });
@@ -190,6 +219,9 @@ export const getProfile = async (req, res) => {
                 name: true,
                 email: true,
                 role: true,
+                phone: true,
+                dateOfBirth: true,
+                age: true,
                 createdAt: true,
                 updatedAt: true,
             },

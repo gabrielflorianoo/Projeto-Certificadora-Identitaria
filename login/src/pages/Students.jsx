@@ -120,15 +120,6 @@ const Students = () => {
                                     Idade
                                 </TableHead>
                                 <TableHead className="text-blue-200">
-                                    Escola
-                                </TableHead>
-                                <TableHead className="text-blue-200">
-                                    Turma
-                                </TableHead>
-                                <TableHead className="text-blue-200">
-                                    Responsável
-                                </TableHead>
-                                <TableHead className="text-blue-200">
                                     Status
                                 </TableHead>
                                 <TableHead className="text-blue-200">
@@ -147,15 +138,6 @@ const Students = () => {
                                     </TableCell>
                                     <TableCell className="text-blue-200">
                                         {student.age} anos
-                                    </TableCell>
-                                    <TableCell className="text-blue-200">
-                                        {student.school}
-                                    </TableCell>
-                                    <TableCell className="text-blue-200">
-                                        {student.turma}
-                                    </TableCell>
-                                    <TableCell className="text-blue-200">
-                                        {student.responsibleName}
                                     </TableCell>
                                     <TableCell>
                                         {getStatusBadge(student.status)}

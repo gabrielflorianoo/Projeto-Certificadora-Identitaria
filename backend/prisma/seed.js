@@ -24,7 +24,8 @@ async function main() {
             password: hashedPassword,
             role: "ADMIN",
             phone: "43999990000",
-            dateOfBirth: new Date("1985-01-15T00:00:00.000Z")
+            dateOfBirth: new Date("1985-01-15T00:00:00.000Z"),
+            age: 39
         },
     });
 
@@ -37,6 +38,7 @@ async function main() {
             role: "TEACHER",
             phone: "43988881111",
             dateOfBirth: new Date("1978-05-20T00:00:00.000Z"),
+            age: 46
         },
     });
 
@@ -48,6 +50,7 @@ async function main() {
             role: "TEACHER",
             phone: "43977772222",
             dateOfBirth: new Date("1982-11-10T00:00:00.000Z"),
+            age: 42
         },
     });
 
@@ -60,6 +63,7 @@ async function main() {
             role: "STUDENT",
             phone: "43955554444",
             dateOfBirth: new Date("2000-07-25T00:00:00.000Z"),
+            age: 24
         },
     });
 
@@ -71,6 +75,7 @@ async function main() {
             role: "STUDENT",
             phone: "43944445555",
             dateOfBirth: new Date("2001-09-12T00:00:00.000Z"),
+            age: 23
         },
     });
 
@@ -83,6 +88,7 @@ async function main() {
             role: "VOLUNTEER",
             phone: "43933336666",
             dateOfBirth: new Date("1995-02-18T00:00:00.000Z"),
+            age: 29
         },
     });
 
