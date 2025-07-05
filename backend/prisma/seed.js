@@ -23,6 +23,8 @@ async function main() {
             email: "admin@example.com",
             password: hashedPassword,
             role: "ADMIN",
+            phone: "43999990000",
+            dateOfBirth: new Date("1985-01-15T00:00:00.000Z")
         },
     });
 
@@ -33,6 +35,8 @@ async function main() {
             email: "joao@example.com",
             password: await bcrypt.hash("123456", 10),
             role: "TEACHER",
+            phone: "43988881111",
+            dateOfBirth: new Date("1978-05-20T00:00:00.000Z"),
         },
     });
 
@@ -42,6 +46,8 @@ async function main() {
             email: "maria@example.com",
             password: await bcrypt.hash("123456", 10),
             role: "TEACHER",
+            phone: "43977772222",
+            dateOfBirth: new Date("1982-11-10T00:00:00.000Z"),
         },
     });
 
@@ -52,6 +58,8 @@ async function main() {
             email: "ana@example.com",
             password: await bcrypt.hash("123456", 10),
             role: "STUDENT",
+            phone: "43955554444",
+            dateOfBirth: new Date("2000-07-25T00:00:00.000Z"),
         },
     });
 
@@ -61,6 +69,8 @@ async function main() {
             email: "carlos@example.com",
             password: await bcrypt.hash("123456", 10),
             role: "STUDENT",
+            phone: "43944445555",
+            dateOfBirth: new Date("2001-09-12T00:00:00.000Z"),
         },
     });
 
@@ -71,6 +81,8 @@ async function main() {
             email: "beatriz@example.com",
             password: await bcrypt.hash("123456", 10),
             role: "VOLUNTEER",
+            phone: "43933336666",
+            dateOfBirth: new Date("1995-02-18T00:00:00.000Z"),
         },
     });
 
@@ -79,9 +91,12 @@ async function main() {
         data: {
             title: "Desenvolvimento Web Básico",
             description: "Aprenda os fundamentos de HTML, CSS e JavaScript",
-            startDate: new Date("2024-02-01"),
-            endDate: new Date("2024-04-30"),
+            startDate: new Date("2024-02-01T08:00:00.000Z"),
+            endDate: new Date("2024-04-30T17:00:00.000Z"),
             maxParticipants: 20,
+            semester: "2024.1",
+            location: "UTFPR, Sala 101, Bloco A", 
+            modality: "PRESENCIAL",
         },
     });
 
@@ -89,9 +104,12 @@ async function main() {
         data: {
             title: "Python para Iniciantes",
             description: "Introdução à programação com Python",
-            startDate: new Date("2024-03-01"),
-            endDate: new Date("2024-05-31"),
+            startDate: new Date("2024-03-01T09:00:00.000Z"),
+            endDate: new Date("2024-05-31T18:00:00.000Z"),
             maxParticipants: 15,
+            semester: "2024.1",
+            location: "Online (Plataforma Moodle)",
+            modality: "ONLINE",
         },
     });
 
@@ -100,7 +118,7 @@ async function main() {
         data: {
             userId: student1.id,
             workshopId: workshop1.id,
-            status: "ACTIVE",
+            status: "ATTENDING",
         },
     });
 
@@ -108,7 +126,7 @@ async function main() {
         data: {
             userId: student1.id,
             workshopId: workshop2.id,
-            status: "ACTIVE",
+            status: "APPROVED",
         },
     });
 
@@ -116,7 +134,7 @@ async function main() {
         data: {
             userId: student2.id,
             workshopId: workshop1.id,
-            status: "ACTIVE",
+            status: "CANCELED",
         },
     });
 
@@ -124,30 +142,27 @@ async function main() {
     const class1 = await prisma.class.create({
         data: {
             workshopId: workshop1.id,
-            date: new Date("2024-02-05"),
+            date: new Date("2024-02-05T10:00:00.000Z"),
             subject: "Introdução ao HTML",
             taughtById: teacher1.id,
-            enrolledStudents: 2,
         },
     });
 
     const class2 = await prisma.class.create({
         data: {
             workshopId: workshop1.id,
-            date: new Date("2024-02-12"),
+            date: new Date("2024-02-12T10:00:00.000Z"),
             subject: "CSS Básico",
             taughtById: teacher1.id,
-            enrolledStudents: 2,
         },
     });
 
     const class3 = await prisma.class.create({
         data: {
             workshopId: workshop2.id,
-            date: new Date("2024-03-05"),
+            date: new Date("2024-03-05T14:00:00.000Z"),
             subject: "Variáveis e Tipos de Dados",
             taughtById: teacher2.id,
-            enrolledStudents: 1,
         },
     });
 
@@ -183,6 +198,8 @@ async function main() {
             classId: class1.id,
             grade: 8.5,
             notes: "Bom desempenho na primeira aula",
+            assessmentType: "PARTICIPATION",
+            weight: 0.2,
         },
     });
 
@@ -192,6 +209,19 @@ async function main() {
             classId: class1.id,
             grade: 9.0,
             notes: "Excelente participação",
+            assessmentType: "PARTICIPATION",
+            weight: 0.2,
+        },
+    });
+
+    await prisma.grade.create({
+        data: {
+            userId: student1.id,
+            workshopId: workshop1.id,
+            grade: 7.8,
+            notes: "Nota final do projeto de Web Básico",
+            assessmentType: "FINAL_EXAM",
+            weight: 0.6,
         },
     });
 
@@ -207,7 +237,9 @@ async function main() {
     console.log("\n🔑 Credenciais de acesso:");
     console.log("Admin: admin@example.com / admin123");
     console.log("Professor: joao@example.com / 123456");
+    console.log("Coordenador: fernanda@example.com / 123456");
     console.log("Estudante: ana@example.com / 123456");
+    console.log("Voluntário: beatriz@example.com / 123456");
 }
 
 main()
