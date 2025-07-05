@@ -61,7 +61,7 @@ const Login = () => {
                     <img
                       src="/ellpi.png"
                       alt="Ellpi"
-                      className="mx-auto mb-6 w-100 h-auto animate-float"
+                      className="mx-auto mb-2 w-35 h-auto animate-float"
                     />
                     <p className="text-blue-200 text-sm">
                         Educação Lógica, Lúdica e Programação
