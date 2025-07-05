@@ -328,3 +328,39 @@ export const deleteClass = async (req, res) => {
         res.status(500).json({ error: "Erro interno do servidor" });
     }
 };
+
+export const getTotalStudentsByClass = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validar se o ID é válido
+        if (!id || isNaN(parseInt(id))) {
+            return res.status(400).json({ error: "ID de turma inválido" });
+        }
+
+        const classId = parseInt(id);
+
+        // Verificar se a turma existe
+        const classExists = await prisma.class.findUnique({
+            where: { id: classId },
+        });
+
+        if (!classExists) {
+            return res.status(404).json({ error: "Turma não encontrada" });
+        }
+
+        // Contar o número de alunos únicos que têm presença registrada nesta turma
+        const uniqueStudents = await prisma.attendance.findMany({
+            where: { classId: classId },
+            distinct: ['userId'],
+            select: { userId: true },
+        });
+
+        const totalStudents = uniqueStudents.length;
+
+        res.json({ total: totalStudents });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+    }
+}

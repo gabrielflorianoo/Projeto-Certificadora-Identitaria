@@ -19,8 +19,12 @@ const Users = () => {
         const fetchUsers = async () => {
             try {
                 const usersData = await listUsers();
-                if (usersData && usersData.length > 0) {
-                    setUsers(usersData);
+                if (usersData.users && usersData.users.length > 0) {
+                    const filteredUsers = usersData.users.filter(
+                        (user) => user.role !== "ADMIN",
+                    );
+
+                    setUsers(filteredUsers || []);
                 } else {
                     // Placeholder data
                     setUsers([
@@ -57,10 +61,10 @@ const Users = () => {
         const roleNames = {
             admin: "Administrador",
             volunteer: "Voluntário",
-            coordinator: "Coordenador",
-            parent: "Responsável",
+            teacher: "Professor",
+            student: "Estudante",
         };
-        return roleNames[role] || role;
+        return roleNames[role.toLowerCase()] || role;
     };
 
     const getStatusBadge = (status) => {

@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Users, Settings } from "lucide-react";
-import { listUsers } from "../lib/server";
+import { listStudents } from "../lib/server";
 
 const Students = () => {
     const [students, setStudents]  = useState([]);
@@ -20,8 +20,8 @@ const Students = () => {
         const fetchStudents = async () => {
             setLoading(true);
             try {
-                const data = await listUsers() || [];
-                setStudents(Array.isArray(data) ? data : []);
+                const data = await listStudents() || [];
+                setStudents(Array.isArray(data.users) ? data.users : []);
             } catch (error) {
                 console.error("Failed to fetch students:", error);
             } finally {

@@ -12,10 +12,12 @@ import {
 import { LayoutGrid, Settings, Users } from "lucide-react";
 import {
     listClasses,
+    getTotalStudentsByClass,
 } from "../lib/server";
 
 const Classes = () => {
     const [classes, setClasses] = useState([]);
+    const [studentCounts, setStudentCounts] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -23,11 +25,25 @@ const Classes = () => {
         const fetchClasses = async () => {
             try {
                 const data = await listClasses();
-                if (data && data.length > 0) {
-                    setClasses(data);
+                if (data.classes && data.classes.length > 0) {
+                    setClasses(data.classes);
+                    
+                    // Buscar contagem de alunos para cada turma
+                    const counts = {};
+                    for (const classItem of data.classes) {
+                        try {
+                            const studentData = await getTotalStudentsByClass(classItem.id);
+                            counts[classItem.id] = studentData.total || 0;
+                        } catch (err) {
+                            console.error(`Erro ao obter alunos da turma ${classItem.id}:`, err);
+                            counts[classItem.id] = 0;
+                        }
+                    }
+                    setStudentCounts(counts);
                 } else {
                     // Se não houver turmas, cria uma turma padrão
                     setClasses([{ id: 'default', name: 'Sem turmas', schedule: 'N/A', days: 'N/A', instructor: 'N/A', subject: 'N/A', studentsCount: 0, maxStudents: 0, status: 'inativo' }]);
+                    setStudentCounts({ default: 0 });
                 }
                 setLoading(false);
             } catch (err) {
@@ -71,7 +87,9 @@ const Classes = () => {
                 Disponível
             </span>
         );
-    };
+    };    const getTotalStudents = (classId) => {
+        return studentCounts[classId] || 0;
+    }
 
     if (loading) {
         return <div>Carregando turmas...</div>;
@@ -121,10 +139,9 @@ const Classes = () => {
                         </div>
                     </GlassCard>
                     <GlassCard className="p-4">
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-blue-300">
-                                {classes.reduce(
-                                    (acc, c) => acc + c.studentsCount,
+                        <div className="text-center">                            <div className="text-2xl font-bold text-blue-300">
+                                {Object.values(studentCounts).reduce(
+                                    (acc, count) => acc + count,
                                     0,
                                 )}
                             </div>
@@ -150,18 +167,6 @@ const Classes = () => {
                         <TableHeader>
                             <TableRow className="border-white/10">
                                 <TableHead className="text-blue-200">
-                                    Nome da Turma
-                                </TableHead>
-                                <TableHead className="text-blue-200">
-                                    Horário
-                                </TableHead>
-                                <TableHead className="text-blue-200">
-                                    Dias
-                                </TableHead>
-                                <TableHead className="text-blue-200">
-                                    Instrutor
-                                </TableHead>
-                                <TableHead className="text-blue-200">
                                     Matéria
                                 </TableHead>
                                 <TableHead className="text-blue-200">
@@ -181,31 +186,13 @@ const Classes = () => {
                                     key={classItem.id}
                                     className="border-white/10 hover:bg-white/5"
                                 >
-                                    <TableCell className="text-white font-medium">
-                                        {classItem.name}
-                                    </TableCell>
-                                    <TableCell className="text-blue-200">
-                                        {classItem.schedule}
-                                    </TableCell>
-                                    <TableCell className="text-blue-200">
-                                        {classItem.days}
-                                    </TableCell>
-                                    <TableCell className="text-blue-200">
-                                        {classItem.instructor}
-                                    </TableCell>
                                     <TableCell className="text-blue-200">
                                         {classItem.subject}
-                                    </TableCell>
-                                    <TableCell>
+                                    </TableCell>                                    <TableCell>
                                         <div className="flex items-center gap-2">
                                             <span className="text-white">
-                                                {classItem.studentsCount}/
-                                                {classItem.maxStudents}
+                                                {getTotalStudents(classItem.id)}
                                             </span>
-                                            {getCapacityBadge(
-                                                classItem.studentsCount,
-                                                classItem.maxStudents,
-                                            )}
                                         </div>
                                     </TableCell>
                                     <TableCell>

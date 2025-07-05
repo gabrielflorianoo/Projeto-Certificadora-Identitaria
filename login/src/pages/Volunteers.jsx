@@ -195,7 +195,7 @@ const Volunteers = () => {
                                 <TableRow>
                                     <TableHead className="text-blue-200">Nome</TableHead>
                                     <TableHead className="text-blue-200">Email</TableHead>
-                                    <TableHead className="text-blue-200">Workshops</TableHead>
+                                    <TableHead className="text-blue-200">Matérias</TableHead>
                                     <TableHead className="text-blue-200">Cadastrado em</TableHead>
                                     <TableHead className="text-blue-200">Ações</TableHead>
                                 </TableRow>
@@ -212,7 +212,7 @@ const Volunteers = () => {
                                         <TableCell>
                                             <div className="flex gap-1">
                                                 <Badge variant="outline">
-                                                    {volunteer.enrollments?.length || 0} workshops
+                                                    {volunteer.enrollments?.length || 0} matéria{volunteer.enrollments?.length === 1 ? '' : 's'}
                                                 </Badge>
                                             </div>
                                         </TableCell>

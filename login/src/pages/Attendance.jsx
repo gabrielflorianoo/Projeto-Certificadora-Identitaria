@@ -18,7 +18,14 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Calendar, CheckCircle, XCircle, Clock, Search, Filter } from "lucide-react";
+import {
+    Calendar,
+    CheckCircle,
+    XCircle,
+    Clock,
+    Search,
+    Filter,
+} from "lucide-react";
 import { listClasses, listStudents } from "../lib/server";
 
 const Attendance = () => {
@@ -26,14 +33,17 @@ const Attendance = () => {
     const [students, setStudents] = useState([]);
     const [attendanceData, setAttendanceData] = useState([]);
     const [selectedClass, setSelectedClass] = useState("");
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [selectedDate, setSelectedDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
 
     const loadClasses = async () => {
         try {
             const classesData = await listClasses();
-            setClasses(classesData || []);
+            console.log("Dados de turmas:", classesData);
+            setClasses(classesData.classes || []);
         } catch (error) {
             console.error("Erro ao carregar classes:", error);
         }
@@ -42,11 +52,14 @@ const Attendance = () => {
     const loadStudents = async () => {
         try {
             const studentsData = await listStudents();
-            setStudents(studentsData || []);
+            console.log("Dados de estudantes:", studentsData);
+            setStudents(studentsData.users || []);
         } catch (error) {
             console.error("Erro ao carregar estudantes:", error);
         }
-    };useEffect(() => {
+    };
+
+    useEffect(() => {
         loadClasses();
         loadStudents();
     }, []);
@@ -57,53 +70,37 @@ const Attendance = () => {
         }
     }, [selectedClass, selectedDate]);
 
-    const loadClassesData = async () => {
-        try {
-            const classesData = await listClasses();
-            if (Array.isArray(classesData)) {
-                setClasses(classesData);
-            } else {
-                console.error("Data from listClasses is not an array:", classesData);
-                setClasses([]);
-            }
-        } catch (error) {
-            console.error("Erro ao carregar turmas:", error);
-            setClasses([]);
-        }
-    };    const loadStudentsData = async () => {
-        try {
-            const studentsData = await listStudents();
-            setStudents(studentsData.users || studentsData || []);
-        } catch (error) {
-            console.error("Erro ao carregar alunos:", error);
-        }
-    };
-
     const loadAttendanceData = async () => {
         setLoading(true);
         try {
             const attendances = await listAttendances();
 
-            const classAttendances = attendances.filter(attendance =>
-                attendance.classId === parseInt(selectedClass) &&
-                attendance.date === selectedDate
+            const classAttendances = attendances.filter(
+                (attendance) =>
+                    attendance.classId === parseInt(selectedClass) &&
+                    attendance.date === selectedDate
             );
 
             if (classAttendances.length > 0) {
                 setAttendanceData(classAttendances[0].records);
             } else {
-                const classStudents = students.filter(student =>
-                    student.enrollments?.some(enrollment => enrollment.classId === parseInt(selectedClass))
+                const classStudents = students.filter((student) =>
+                    student.enrollments?.some(
+                        (enrollment) =>
+                            enrollment.classId === parseInt(selectedClass)
+                    )
                 );
 
-                const initialAttendanceRecords = classStudents.map(student => ({
-                    studentId: student.id,
-                    studentName: student.name,
-                    studentEmail: student.email,
-                    status: 'absent',
-                    checkedAt: null,
-                    notes: ""
-                }));
+                const initialAttendanceRecords = classStudents.map(
+                    (student) => ({
+                        studentId: student.id,
+                        studentName: student.name,
+                        studentEmail: student.email,
+                        status: "absent",
+                        checkedAt: null,
+                        notes: "",
+                    })
+                );
 
                 setAttendanceData(initialAttendanceRecords);
             }
@@ -115,10 +112,14 @@ const Attendance = () => {
     };
 
     const updateAttendance = (studentId, status) => {
-        setAttendanceData(prev =>
-            prev.map(record =>
+        setAttendanceData((prev) =>
+            prev.map((record) =>
                 record.studentId === studentId
-                    ? { ...record, status, checkedAt: new Date().toLocaleTimeString() }
+                    ? {
+                          ...record,
+                          status,
+                          checkedAt: new Date().toLocaleTimeString(),
+                      }
                     : record
             )
         );
@@ -129,17 +130,21 @@ const Attendance = () => {
             const attendanceDataToSave = {
                 classId: parseInt(selectedClass),
                 date: selectedDate,
-                records: attendanceData
+                records: attendanceData,
             };
 
             const attendances = await listAttendances();
-            const existingAttendance = attendances.find(attendance =>
-                attendance.classId === parseInt(selectedClass) &&
-                attendance.date === selectedDate
+            const existingAttendance = attendances.find(
+                (attendance) =>
+                    attendance.classId === parseInt(selectedClass) &&
+                    attendance.date === selectedDate
             );
 
             if (existingAttendance) {
-                await updateAttendanceAPI(existingAttendance.id, attendanceDataToSave);
+                await updateAttendanceAPI(
+                    existingAttendance.id,
+                    attendanceDataToSave
+                );
             } else {
                 await createAttendance(attendanceDataToSave);
             }
@@ -153,11 +158,11 @@ const Attendance = () => {
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'present':
+            case "present":
                 return <CheckCircle className="w-5 h-5 text-green-500" />;
-            case 'absent':
+            case "absent":
                 return <XCircle className="w-5 h-5 text-red-500" />;
-            case 'late':
+            case "late":
                 return <Clock className="w-5 h-5 text-yellow-500" />;
             default:
                 return <Clock className="w-5 h-5 text-gray-500" />;
@@ -166,12 +171,24 @@ const Attendance = () => {
 
     const getStatusBadge = (status) => {
         const variants = {
-            present: { variant: "default", text: "Presente", className: "bg-green-500 hover:bg-green-600" },
+            present: {
+                variant: "default",
+                text: "Presente",
+                className: "bg-green-500 hover:bg-green-600",
+            },
             absent: { variant: "destructive", text: "Ausente", className: "" },
-            late: { variant: "secondary", text: "Atrasado", className: "bg-yellow-500 hover:bg-yellow-600" }
+            late: {
+                variant: "secondary",
+                text: "Atrasado",
+                className: "bg-yellow-500 hover:bg-yellow-600",
+            },
         };
 
-        const config = variants[status] || { variant: "outline", text: "Pendente", className: "" };
+        const config = variants[status] || {
+            variant: "outline",
+            text: "Pendente",
+            className: "",
+        };
 
         return (
             <Badge variant={config.variant} className={config.className}>
@@ -180,14 +197,23 @@ const Attendance = () => {
         );
     };
 
-    const filteredAttendance = attendanceData.filter(record =>
-        record.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.studentEmail?.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredAttendance = attendanceData.filter(
+        (record) =>
+            record.studentName
+                ?.toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+            record.studentEmail
+                ?.toLowerCase()
+                .includes(searchTerm.toLowerCase())
     );
 
-    const presentCount = attendanceData.filter(r => r.status === 'present').length;
-    const absentCount = attendanceData.filter(r => r.status === 'absent').length;
-    const lateCount = attendanceData.filter(r => r.status === 'late').length;
+    const presentCount = attendanceData.filter(
+        (r) => r.status === "present"
+    ).length;
+    const absentCount = attendanceData.filter(
+        (r) => r.status === "absent"
+    ).length;
+    const lateCount = attendanceData.filter((r) => r.status === "late").length;
     const totalStudents = attendanceData.length;
 
     return (
@@ -211,7 +237,9 @@ const Attendance = () => {
                         <Button
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                             onClick={saveAttendance}
-                            disabled={!selectedClass || attendanceData.length === 0}
+                            disabled={
+                                !selectedClass || attendanceData.length === 0
+                            }
                         >
                             Salvar Presença
                         </Button>
@@ -225,16 +253,24 @@ const Attendance = () => {
                             <label className="block text-sm font-medium text-white mb-2">
                                 Turma
                             </label>
-                            <Select value={selectedClass} onValueChange={setSelectedClass}>
+                            <Select
+                                value={selectedClass}
+                                onValueChange={setSelectedClass}
+                            >
                                 <SelectTrigger className="bg-white/10 border-white/20 text-white">
                                     <SelectValue placeholder="Selecione uma turma" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {classes && classes.length > 0 && classes.map(cls => (
-                                        <SelectItem key={cls.id} value={cls.id.toString()}>
-                                            {cls.name}
-                                        </SelectItem>
-                                    ))}
+                                    {classes &&
+                                        classes.length > 0 &&
+                                        classes.map((cls) => (
+                                            <SelectItem
+                                                key={cls.id}
+                                                value={cls.id.toString()}
+                                            >
+                                                {cls.name}
+                                            </SelectItem>
+                                        ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -245,7 +281,9 @@ const Attendance = () => {
                             <Input
                                 type="date"
                                 value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
+                                onChange={(e) =>
+                                    setSelectedDate(e.target.value)
+                                }
                                 className="bg-white/10 border-white/20 text-white"
                             />
                         </div>
@@ -258,7 +296,9 @@ const Attendance = () => {
                                 <Input
                                     placeholder="Nome ou email..."
                                     value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onChange={(e) =>
+                                        setSearchTerm(e.target.value)
+                                    }
                                     className="pl-10 bg-white/10 border-white/20 text-white"
                                 />
                             </div>
@@ -285,7 +325,9 @@ const Attendance = () => {
                                 <div className="text-2xl font-bold text-white">
                                     {totalStudents}
                                 </div>
-                                <div className="text-blue-200 text-sm">Total de Alunos</div>
+                                <div className="text-blue-200 text-sm">
+                                    Total de Alunos
+                                </div>
                             </div>
                         </GlassCard>
                         <GlassCard className="p-4">
@@ -293,9 +335,17 @@ const Attendance = () => {
                                 <div className="text-2xl font-bold text-green-300">
                                     {presentCount}
                                 </div>
-                                <div className="text-blue-200 text-sm">Presentes</div>
+                                <div className="text-blue-200 text-sm">
+                                    Presentes
+                                </div>
                                 <div className="text-green-300 text-xs">
-                                    {totalStudents > 0 ? Math.round((presentCount / totalStudents) * 100) : 0}%
+                                    {totalStudents > 0
+                                        ? Math.round(
+                                              (presentCount / totalStudents) *
+                                                  100
+                                          )
+                                        : 0}
+                                    %
                                 </div>
                             </div>
                         </GlassCard>
@@ -304,9 +354,17 @@ const Attendance = () => {
                                 <div className="text-2xl font-bold text-red-300">
                                     {absentCount}
                                 </div>
-                                <div className="text-blue-200 text-sm">Ausentes</div>
+                                <div className="text-blue-200 text-sm">
+                                    Ausentes
+                                </div>
                                 <div className="text-red-300 text-xs">
-                                    {totalStudents > 0 ? Math.round((absentCount / totalStudents) * 100) : 0}%
+                                    {totalStudents > 0
+                                        ? Math.round(
+                                              (absentCount / totalStudents) *
+                                                  100
+                                          )
+                                        : 0}
+                                    %
                                 </div>
                             </div>
                         </GlassCard>
@@ -315,9 +373,16 @@ const Attendance = () => {
                                 <div className="text-2xl font-bold text-yellow-300">
                                     {lateCount}
                                 </div>
-                                <div className="text-blue-200 text-sm">Atrasados</div>
+                                <div className="text-blue-200 text-sm">
+                                    Atrasados
+                                </div>
                                 <div className="text-yellow-300 text-xs">
-                                    {totalStudents > 0 ? Math.round((lateCount / totalStudents) * 100) : 0}%
+                                    {totalStudents > 0
+                                        ? Math.round(
+                                              (lateCount / totalStudents) * 100
+                                          )
+                                        : 0}
+                                    %
                                 </div>
                             </div>
                         </GlassCard>
@@ -333,7 +398,11 @@ const Attendance = () => {
                         </h3>
                         {selectedClass && (
                             <Badge variant="outline" className="ml-2">
-                                {classes.find(c => c.id.toString() === selectedClass)?.name}
+                                {
+                                    classes.find(
+                                        (c) => c.id.toString() === selectedClass
+                                    )?.name
+                                }
                             </Badge>
                         )}
                     </div>
@@ -344,28 +413,48 @@ const Attendance = () => {
                         </div>
                     ) : !selectedClass ? (
                         <div className="text-center py-8">
-                            <div className="text-blue-200">Selecione uma turma para visualizar a lista de presença</div>
+                            <div className="text-blue-200">
+                                Selecione uma turma para visualizar a lista de
+                                presença
+                            </div>
                         </div>
                     ) : filteredAttendance.length === 0 ? (
                         <div className="text-center py-8">
-                            <div className="text-blue-200">Nenhum aluno encontrado</div>
+                            <div className="text-blue-200">
+                                Nenhum aluno encontrado
+                            </div>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
                                     <TableRow className="border-white/10">
-                                        <TableHead className="text-white">#</TableHead>
-                                        <TableHead className="text-white">Aluno</TableHead>
-                                        <TableHead className="text-white">Email</TableHead>
-                                        <TableHead className="text-white">Status</TableHead>
-                                        <TableHead className="text-white">Horário</TableHead>
-                                        <TableHead className="text-white">Ações</TableHead>
+                                        <TableHead className="text-white">
+                                            #
+                                        </TableHead>
+                                        <TableHead className="text-white">
+                                            Aluno
+                                        </TableHead>
+                                        <TableHead className="text-white">
+                                            Email
+                                        </TableHead>
+                                        <TableHead className="text-white">
+                                            Status
+                                        </TableHead>
+                                        <TableHead className="text-white">
+                                            Horário
+                                        </TableHead>
+                                        <TableHead className="text-white">
+                                            Ações
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {filteredAttendance.map((record, index) => (
-                                        <TableRow key={record.studentId} className="border-white/10">
+                                        <TableRow
+                                            key={record.studentId}
+                                            className="border-white/10"
+                                        >
                                             <TableCell className="text-white font-medium">
                                                 {index + 1}
                                             </TableCell>
@@ -377,8 +466,12 @@ const Attendance = () => {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
-                                                    {getStatusIcon(record.status)}
-                                                    {getStatusBadge(record.status)}
+                                                    {getStatusIcon(
+                                                        record.status
+                                                    )}
+                                                    {getStatusBadge(
+                                                        record.status
+                                                    )}
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-blue-200">
@@ -390,7 +483,12 @@ const Attendance = () => {
                                                         size="sm"
                                                         variant="outline"
                                                         className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-                                                        onClick={() => updateAttendance(record.studentId, 'present')}
+                                                        onClick={() =>
+                                                            updateAttendance(
+                                                                record.studentId,
+                                                                "present"
+                                                            )
+                                                        }
                                                     >
                                                         Presente
                                                     </Button>
@@ -398,7 +496,12 @@ const Attendance = () => {
                                                         size="sm"
                                                         variant="outline"
                                                         className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white"
-                                                        onClick={() => updateAttendance(record.studentId, 'late')}
+                                                        onClick={() =>
+                                                            updateAttendance(
+                                                                record.studentId,
+                                                                "late"
+                                                            )
+                                                        }
                                                     >
                                                         Atrasado
                                                     </Button>
@@ -406,7 +509,12 @@ const Attendance = () => {
                                                         size="sm"
                                                         variant="outline"
                                                         className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                                                        onClick={() => updateAttendance(record.studentId, 'absent')}
+                                                        onClick={() =>
+                                                            updateAttendance(
+                                                                record.studentId,
+                                                                "absent"
+                                                            )
+                                                        }
                                                     >
                                                         Ausente
                                                     </Button>

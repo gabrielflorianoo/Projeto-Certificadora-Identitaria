@@ -78,7 +78,7 @@ export const listUsers = async () => {
 
 export const listStudents = async () => {
     try {
-        const response = await api.get('/users/students');
+        const response = await api.get('/users/role/STUDENT');
         return response.data;
     } catch (error) {
         throw error.response?.data || error;
@@ -246,6 +246,15 @@ export const deleteClass = async (id) => {
         throw error.response?.data || error;
     }
 };
+
+export const getTotalStudentsByClass = async (classId) => {
+    try {
+        const response = await api.get(`/classes/${classId}/students/count`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+}
 
 // Grades (Notas)
 export const listGrades = async () => {
