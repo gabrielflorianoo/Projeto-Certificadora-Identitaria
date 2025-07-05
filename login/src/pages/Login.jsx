@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import GlassCard from "../components/GlassCard";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -8,7 +8,16 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
     const { login, loading, isAuthenticated } = useAuth();
+
+    // Mostrar mensagem de sucesso do registro se existir
+    useEffect(() => {
+        if (location.state?.message) {
+            // Aqui você pode usar um toast ou similar
+            console.log(location.state.message);
+        }
+    }, [location]);
 
     // Redirecionar se já estiver autenticado
     useEffect(() => {
@@ -93,9 +102,20 @@ const Login = () => {
                         disabled={loading}
                         className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:scale-105 transition-transform duration-200 disabled:opacity-50"
                     >
-                        {loading ? "Entrando..." : "Entrar"}
-                    </button>
+                        {loading ? "Entrando..." : "Entrar"}                    </button>
                 </form>
+
+                <div className="mt-6 text-center">
+                    <p className="text-white/70 text-sm">
+                        Não tem uma conta?{" "}
+                        <Link 
+                            to="/register" 
+                            className="text-blue-300 hover:text-blue-200 underline transition-colors"
+                        >
+                            Criar conta
+                        </Link>
+                    </p>
+                </div>
 
                 <div className="mt-8 p-4 bg-white/5 rounded-lg">
                     <h3 className="text-white font-semibold mb-3 text-center">

@@ -8,6 +8,7 @@ import { DataProvider } from "./contexts/DataContext";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Volunteers from "./pages/Volunteers";
@@ -29,9 +30,9 @@ const App = () => (
             <AuthProvider>
                 <DataProvider>
                     <BrowserRouter>
-                        <Layout>
-                            <Routes>
+                        <Layout>                            <Routes>
                                 <Route path="/login" element={<Login />} />
+                                <Route path="/register" element={<Register />} />
                                 <Route
                                     path="/unauthorized"
                                     element={<Unauthorized />}
