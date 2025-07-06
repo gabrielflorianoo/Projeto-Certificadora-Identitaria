@@ -4,6 +4,10 @@
 
 O Sistema ELLP (Educação Lógica, Lúdica e Programação) é uma plataforma web desenvolvida para gerenciar workshops educacionais da UTFPR - Campus Cornélio Procópio. O sistema permite o controle completo de usuários, workshops, aulas, matrículas, frequência e notas, facilitando a administração de projetos educacionais voltados ao ensino de programação e lógica. (usamos lovable.dev para deixar o design um pouco mais moderno, pois estava dando conflitos com varios navegadores)
 
+## Integrantes do grupo
+- Gabriel Fernando Floriano 2564149
+- Matheus Marinho Rodrigues 2575299
+
 ## 🚀 Funcionalidades Desenvolvidas
 
 ### ✅ Funcionalidades Implementadas e Avaliáveis:
