@@ -7,6 +7,7 @@ O Sistema ELLP (Educação Lógica, Lúdica e Programação) é uma plataforma w
 ## Integrantes do grupo
 - Gabriel Fernando Floriano 2564149
 - Matheus Marinho Rodrigues 2575299
+- Robson Luís de Carvalho 2539039
 
 ## 🚀 Funcionalidades Desenvolvidas
 
