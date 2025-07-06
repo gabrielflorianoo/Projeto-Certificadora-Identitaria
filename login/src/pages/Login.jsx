@@ -58,9 +58,11 @@ const Login = () => {
         <div className="min-h-screen flex items-center justify-center p-4">
             <GlassCard className="w-full max-w-md p-8">
                 <div className="text-center mb-8">
-                    <h1 className="text-white text-3xl font-bold animate-float mb-2">
-                        ELLP Sistema
-                    </h1>
+                    <img
+                      src="/ellpi.png"
+                      alt="Ellpi"
+                      className="mx-auto mb-2 w-35 h-auto animate-float"
+                    />
                     <p className="text-blue-200 text-sm">
                         Educação Lógica, Lúdica e Programação
                     </p>
