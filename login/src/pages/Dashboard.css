@@ -1,18 +1,89 @@
-/* Dashboard.css */
-
-.dashboard-container {
-  padding: 2rem;
-  color: white;
-  max-width: 900px;
-  margin: 0 auto;
+.dashboard-wrap {
+  display: flex;
+  height: 100vh;
+  font-family: Inter, sans-serif
 }
 
-.dashboard-container h1 {
-  font-size: 2.5rem;
+.sidebar {
+  width: 220px;
+  background: #fff;
+  border-right: 1px solid #e6e6e6;
+  padding: 20px
+}
+
+.sidebar .logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
+  margin-bottom: 20px
 }
 
-.dashboard-container p {
-  margin-top: 0.5rem;
-  font-size: 1.125rem;
+.sidebar nav a {
+  display: block;
+  padding: 12px 6px;
+  border-radius: 8px;
+  color: #333;
+  margin-bottom: 8px;
+  text-decoration: none
+}
+
+.sidebar nav a.active {
+  background: #2f8a2f;
+  color: #fff
+}
+
+
+.content {
+  flex: 1;
+  padding: 28px
+}
+
+.content-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center
+}
+
+.summary {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px
+}
+
+.summary .left {
+  flex: 1
+}
+
+.summary .right {
+  width: 220px
+}
+
+.big {
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 8px
+}
+
+.widgets {
+  display: flex;
+  gap: 24px;
+  margin-top: 26px
+}
+
+.widget {
+  background: #fff;
+  border-radius: 6px;
+  padding: 18px;
+  width: 48%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04)
+}
+
+.chart-placeholder {
+  height: 90px;
+  background: linear-gradient(#f9f9f9, #fff);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center
 }
