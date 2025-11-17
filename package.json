@@ -1,21 +1,24 @@
 {
   "name": "projeto-certificadora-identitaria",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "O Sistema ELLP (Educação Lógica, Lúdica e Programação) é uma plataforma web desenvolvida para gerenciar workshops educacionais da UTFPR - Campus Cornélio Procópio. O sistema permite o controle completo de usuários, workshops, aulas, matrículas, frequência e notas, facilitando a administração de projetos educacionais voltados ao ensino de programação e lógica. (usamos lovable.dev para deixar o design um pouco mais moderno, pois estava dando conflitos com varios navegadores)",
+  "keywords": [],
+  "homepage": "https://github.com/gabrielflorianoo/Projeto-Certificadora-Identitaria#readme",
+  "bugs": {
+    "url": "https://github.com/gabrielflorianoo/Projeto-Certificadora-Identitaria/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gabrielflorianoo/Projeto-Certificadora-Identitaria.git"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
+  "author": "",
   "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/gabrielflorianoo/Projeto-Certificadora-Identitaria/issues"
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "homepage": "https://github.com/gabrielflorianoo/Projeto-Certificadora-Identitaria#readme"
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
