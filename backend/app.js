@@ -8,6 +8,7 @@ import { specs, swaggerUi } from "./swagger.js";
 import indexRouter from "./routes/index.js";
 import authRouter from "./routes/auth.js";
 import usersRouter from "./routes/users.js";
+import volunteersRouter from "./routes/volunteers.js";
 import workshopsRouter from "./routes/workshops.js";
 import enrollmentsRouter from "./routes/enrollments.js";
 import classesRouter from "./routes/classes.js";
@@ -18,7 +19,17 @@ const app = express();
 
 // Middlewares
 app.use(logger("dev"));
-app.use(cors());
+app.use(cors({
+    origin: [
+        "http://localhost:5173", // Vite dev server
+        "http://localhost:3000", // React dev server
+        "http://localhost:8080", // Outro possível dev server
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8080"
+    ],
+    credentials: true
+}));
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -30,6 +41,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use("/", indexRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/volunteers", volunteersRouter);
 app.use("/api/workshops", workshopsRouter);
 app.use("/api/enrollments", enrollmentsRouter);
 app.use("/api/classes", classesRouter);

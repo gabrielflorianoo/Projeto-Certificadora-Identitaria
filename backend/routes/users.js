@@ -5,6 +5,7 @@ import {
     updateUser,
     deleteUser,
     updateUserValidation,
+    getAllUsersByRole,
 } from "../controllers/userController.js";
 import { authenticateToken } from "../middleware/auth.js";
 import { requireAdmin, requireOwnershipOrAdmin } from "../middleware/roles.js";
@@ -13,6 +14,13 @@ const router = express.Router();
 
 // Listar todos os usuários (apenas ADMIN)
 router.get("/", authenticateToken, requireAdmin, getAllUsers);
+
+// Listar usuários por função
+router.get(
+    "/role/:role",
+    authenticateToken,
+    getAllUsersByRole,
+);
 
 // Obter usuário por ID (próprio ou admin)
 router.get("/:id", authenticateToken, requireOwnershipOrAdmin, getUserById);

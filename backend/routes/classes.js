@@ -7,6 +7,7 @@ import {
     deleteClass,
     createClassValidation,
     updateClassValidation,
+    getTotalStudentsByClass,
 } from "../controllers/classController.js";
 import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 
@@ -42,6 +43,13 @@ router.delete(
     authenticateToken,
     authorizeRoles("ADMIN", "TEACHER"),
     deleteClass,
+);
+
+// Pegar total de alunos por aula
+router.get(
+    "/:id/students/count",
+    authenticateToken,
+    getTotalStudentsByClass,
 );
 
 export default router;

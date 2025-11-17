@@ -20,17 +20,42 @@ enum Role {
     TEACHER
 }
 
+enum EnrollmentStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    CANCELED
+    ATTENDING
+}
+
+enum WorkshopModality {
+    PRESENCIAL
+    ONLINE
+    HYBRID
+}
+
+enum AssessmentType {
+    TEST
+    ASSIGNMENT
+    PARTICIPATION
+    FINAL_EXAM
+    OTHER
+}
+
 model User {
-    id        Int      @id @default(autoincrement())
-    name      String
-    email     String   @unique
-    password  String
-    role      Role
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id          Int       @id @default(autoincrement())
+    name        String
+    email       String    @unique
+    password    String
+    role        Role
+    phone       String   
+    dateOfBirth DateTime
+    age         Int
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
 
     enrollments   Enrollment[]
-    taughtClasses Class[]      @relation("TaughtClasses")
+    taughtClasses Class[]      @relation("TaughtClasses") 
     attendances   Attendance[]
     grades        Grade[]
 }
@@ -42,8 +67,11 @@ model Workshop {
     startDate       DateTime
     endDate         DateTime
     maxParticipants Int
-    createdAt       DateTime @default(now())
-    updatedAt       DateTime @updatedAt
+    semester        String          
+    location        String          
+    modality        WorkshopModality? @default(PRESENCIAL) 
+    createdAt       DateTime         @default(now())
+    updatedAt       DateTime         @updatedAt
 
     classes     Class[]
     enrollments Enrollment[]
@@ -54,23 +82,24 @@ model Enrollment {
     id         Int      @id @default(autoincrement())
     userId     Int
     workshopId Int
-    status     String
-    date       DateTime @default(now())
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+    status     EnrollmentStatus 
+    date       DateTime         @default(now())
+    createdAt  DateTime         @default(now())
+    updatedAt  DateTime         @updatedAt
 
     user     User     @relation(fields: [userId], references: [id])
     workshop Workshop @relation(fields: [workshopId], references: [id])
+    @@unique([userId, workshopId])
 }
 
 model Class {
-    id               Int      @id @default(autoincrement())
-    workshopId       Int
-    date             DateTime
-    subject          String
-    taughtById       Int
-    enrolledStudents Int
-    createdAt        DateTime @default(now())
+    id         Int      @id @default(autoincrement())
+    workshopId Int
+    date       DateTime
+    subject    String
+    taughtById Int
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
 
     workshop    Workshop     @relation(fields: [workshopId], references: [id])
     teacher     User         @relation("TaughtClasses", fields: [taughtById], references: [id])
@@ -91,14 +120,16 @@ model Attendance {
 }
 
 model Grade {
-    id         Int      @id @default(autoincrement())
-    userId     Int
-    classId    Int?
-    workshopId Int?
-    grade      Float
-    notes      String?
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+    id             Int           @id @default(autoincrement())
+    userId         Int
+    classId        Int?
+    workshopId     Int?
+    grade          Float
+    notes          String?
+    assessmentType AssessmentType? 
+    weight         Float?        
+    createdAt      DateTime      @default(now())
+    updatedAt      DateTime      @updatedAt
 
     student  User      @relation(fields: [userId], references: [id])
     class    Class?    @relation(fields: [classId], references: [id])

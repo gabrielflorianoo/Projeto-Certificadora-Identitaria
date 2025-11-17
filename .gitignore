@@ -134,3 +134,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Prisma - Apenas para não sobreescrever o arquivo de schema
+# Eu uso postgresql e meus amigos usam mysql
+schema.prisma

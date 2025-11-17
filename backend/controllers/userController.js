@@ -31,8 +31,16 @@ export const getAllUsers = async (req, res) => {
                 name: true,
                 email: true,
                 role: true,
+                phone: true,
+                dateOfBirth: true,
+                age: true,
                 createdAt: true,
                 updatedAt: true,
+                enrollments: {
+                    include: {
+                        workshop: true,
+                    },
+                },
             },
             skip: parseInt(skip),
             take: parseInt(limit),
@@ -56,18 +64,121 @@ export const getAllUsers = async (req, res) => {
     }
 };
 
-// Obter usuário por ID
-export const getUserById = async (req, res) => {
+export const getAllUsersByRole = async (req, res) => {
     try {
-        const { id } = req.params;
+        const role = req.params.role;
+        const { page = 1, limit = 10 } = req.query;
+        const skip = (page - 1) * limit;
 
-        const user = await prisma.user.findUnique({
-            where: { id: parseInt(id) },
+        const users = await prisma.user.findMany({
+            where: { role: role },
             select: {
                 id: true,
                 name: true,
                 email: true,
                 role: true,
+                phone: true,
+                dateOfBirth: true,
+                age: true,
+                createdAt: true,
+                updatedAt: true,
+                enrollments: {
+                    include: {
+                        workshop: true,
+                    },
+                },
+            },
+
+            skip: parseInt(skip),
+            take: parseInt(limit),
+            orderBy: { createdAt: "desc" },
+        });
+
+        const total = await prisma.user.count({ where: { role: role } });
+
+        res.json({
+            users,
+            pagination: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(total / limit),
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+    }
+};
+
+// Listar apenas estudantes (ADMIN, TEACHER, VOLUNTEER)
+export const getStudents = async (req, res) => {
+    try {
+        const { page = 1, limit = 50 } = req.query;
+        const skip = (page - 1) * limit;
+
+        const students = await prisma.user.findMany({
+            where: { role: "STUDENT" },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                phone: true,
+                dateOfBirth: true,
+                age: true,
+                createdAt: true,
+                updatedAt: true,
+                enrollments: {
+                    include: {
+                        workshop: true,
+                    },
+                },
+            },
+            skip: parseInt(skip),
+            take: parseInt(limit),
+            orderBy: { name: "asc" },
+        });
+
+        const total = await prisma.user.count({ where: { role: "STUDENT" } });
+
+        res.json({
+            users: students,
+            pagination: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(total / limit),
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+    }
+};
+
+// Obter usuário por ID
+export const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validar se o ID é válido
+        if (!id || isNaN(parseInt(id))) {
+            return res.status(400).json({ error: "ID de usuário inválido" });
+        }
+
+        const userId = parseInt(id);
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                phone: true,
+                dateOfBirth: true,
+                age: true,
                 createdAt: true,
                 updatedAt: true,
                 enrollments: {
@@ -120,9 +231,16 @@ export const updateUser = async (req, res) => {
         const { id } = req.params;
         const { name, email, role, password } = req.body;
 
+        // Validar se o ID é válido
+        if (!id || isNaN(parseInt(id))) {
+            return res.status(400).json({ error: "ID de usuário inválido" });
+        }
+
+        const userId = parseInt(id);
+
         // Verificar se o usuário existe
         const existingUser = await prisma.user.findUnique({
-            where: { id: parseInt(id) },
+            where: { id: userId },
         });
 
         if (!existingUser) {
@@ -130,7 +248,7 @@ export const updateUser = async (req, res) => {
         }
 
         // Verificar se apenas o próprio usuário ou admin pode atualizar
-        if (req.user.role !== "ADMIN" && req.user.id !== parseInt(id)) {
+        if (req.user.role !== "ADMIN" && req.user.id !== userId) {
             return res.status(403).json({ error: "Acesso negado" });
         }
 
@@ -158,13 +276,16 @@ export const updateUser = async (req, res) => {
         if (password) updateData.password = await bcrypt.hash(password, 10);
 
         const updatedUser = await prisma.user.update({
-            where: { id: parseInt(id) },
+            where: { id: userId },
             data: updateData,
             select: {
                 id: true,
                 name: true,
                 email: true,
                 role: true,
+                phone: true,
+                dateOfBirth: true,
+                age: true,
                 createdAt: true,
                 updatedAt: true,
             },
@@ -185,8 +306,15 @@ export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
 
+        // Validar se o ID é válido
+        if (!id || isNaN(parseInt(id))) {
+            return res.status(400).json({ error: "ID de usuário inválido" });
+        }
+
+        const userId = parseInt(id);
+
         const user = await prisma.user.findUnique({
-            where: { id: parseInt(id) },
+            where: { id: userId },
         });
 
         if (!user) {
@@ -194,7 +322,7 @@ export const deleteUser = async (req, res) => {
         }
 
         await prisma.user.delete({
-            where: { id: parseInt(id) },
+            where: { id: userId },
         });
 
         res.json({ message: "Usuário deletado com sucesso" });
